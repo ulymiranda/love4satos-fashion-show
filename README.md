@@ -125,3 +125,4 @@ Serve the `client/dist` folder as static files via Express or a CDN (Netlify, Ve
 - **Backend**: Railway, Render, or Fly.io
 - Update the CORS origin in `server/server.js` to your frontend URL
 # love4satos-fashion-show
+# love4satos-fashion-show
