@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-black text-white font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-satos-red hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-red-500/50;
+  }
+  .btn-gold {
+    @apply bg-satos-gold hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/50;
+  }
+  .gold-divider {
+    @apply w-24 h-1 bg-satos-gold mx-auto my-6;
+  }
+  .section-title {
+    @apply text-3xl md:text-5xl font-serif font-black text-white text-center mb-3;
+  }
+  .card-dark {
+    @apply bg-gray-900 border border-gray-700 rounded-xl p-6;
+  }
+}
+
+/* Sparkle animation */
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+/* Red carpet shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #FFD700 25%, #fff 50%, #FFD700 75%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Countdown flip */
+.countdown-box {
+  @apply bg-black border-2 border-satos-gold rounded-lg flex flex-col items-center justify-center;
+  min-width: 80px;
+  padding: 16px 12px;
+}
