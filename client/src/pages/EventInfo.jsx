@@ -8,16 +8,43 @@ export default function EventInfo() {
           <p className="text-gray-400">Everything you need to know for the big show</p>
         </div>
 
+        {/* Admission Pricing */}
+        <section className="mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-gradient-to-br from-satos-red to-red-900 rounded-2xl p-6 text-center border border-satos-gold/40">
+              <div className="text-5xl mb-3">🐾</div>
+              <div className="text-satos-gold font-serif font-black text-4xl mb-1">$25</div>
+              <div className="text-white font-bold text-lg mb-2">Dog Contestant Entry</div>
+              <div className="text-red-200 text-sm">Per dog · Cash only · Paid at check-in</div>
+              <div className="mt-3 text-red-100 text-xs">
+                Includes participation in all contest categories
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 text-center border border-satos-gold/40">
+              <div className="text-5xl mb-3">🎟️</div>
+              <div className="text-satos-gold font-serif font-black text-4xl mb-1">$10</div>
+              <div className="text-white font-bold text-lg mb-2">Spectator Admission</div>
+              <div className="text-gray-400 text-sm">Per person · Cash only · Paid at the door</div>
+              <div className="mt-3 text-gray-500 text-xs">
+                Come cheer on the contestants!
+              </div>
+            </div>
+          </div>
+          <p className="text-center text-gray-600 text-xs mt-3">
+            💵 Cash payments only — no card readers on site
+          </p>
+        </section>
+
         {/* Schedule */}
         <section className="card-dark mb-8">
           <h2 className="text-satos-gold font-serif font-bold text-2xl mb-6">🎬 Run of Show</h2>
           <div className="space-y-1">
             {[
-              ['5:00 PM', 'Doors Open — Check-In & Registration Desk'],
+              ['5:00 PM', 'Doors Open — Check-In & Payment Desk'],
               ['5:00 – 5:30 PM', 'Red Carpet Arrival & Pre-Show Photo Ops'],
               ['5:30 PM', 'Welcome Remarks & Introduction'],
               ['5:45 PM', 'Contestant Parade — All Dogs Walk the Runway'],
-              ['6:00 PM', 'Category Judging Begins'],
+              ['6:00 PM', 'Judging Begins — All Dogs Compete in All Categories'],
               ['6:00 – 6:20 PM', 'Best in Show / Most Fashionable / Most Glamorous'],
               ['6:20 – 6:40 PM', 'Funniest / Best Trick / Best Story'],
               ['6:40 – 7:00 PM', 'Best Duo / Best Handmade / Most Charming'],
@@ -40,15 +67,18 @@ export default function EventInfo() {
           <h2 className="text-satos-gold font-serif font-bold text-2xl mb-6">📜 Rules & Guidelines</h2>
           <ul className="space-y-3">
             {[
+              'Entry fee is $25 per dog, paid in cash at the check-in desk on the day of the event.',
+              'Spectator admission is $10 per person, paid in cash at the entrance. No card payments accepted.',
+              'All registered dogs automatically compete in every contest category — no selection needed.',
               'All dogs must be current on vaccinations. Please bring proof of rabies vaccine.',
               'Dogs must be on a leash at all times inside the venue.',
-              'Dogs must be friendly with other dogs and people. Aggressive dogs may be asked to leave.',
+              'Dogs must be friendly with other dogs and people. Aggressive dogs may be asked to leave without refund.',
               'All costumes must be safe and comfortable for your dog — no costume should restrict breathing, vision, or movement.',
               'Owners are responsible for cleaning up after their dogs.',
-              'Contestants must be present at check-in at least 30 minutes before the show starts.',
+              'Contestants must arrive at check-in by 5:15 PM. Late arrivals may not be able to participate in judging.',
               'Judges\' decisions are final.',
-              'Each dog may enter multiple categories but can only win one award.',
-              'Dogs must be pre-registered to participate in judged categories.',
+              'Each dog can only win one award, even if they score highly in multiple categories.',
+              'Dogs must be pre-registered online to participate as contestants.',
               'Well-behaved dogs of all breeds, ages, and sizes are welcome!',
             ].map((rule, i) => (
               <li key={i} className="flex gap-3 text-gray-300 text-sm">
@@ -64,7 +94,8 @@ export default function EventInfo() {
           <h2 className="text-satos-gold font-serif font-bold text-2xl mb-6">🎒 What to Bring</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {[
-              '✅ Your dog\'s registration confirmation / badge',
+              '✅ $25 cash for your dog\'s entry fee',
+              '✅ Your registration confirmation email',
               '✅ Proof of rabies vaccination',
               '✅ Leash and collar (with ID tag)',
               '✅ Dog\'s costume (keep it a surprise!)',
@@ -74,6 +105,7 @@ export default function EventInfo() {
               '✅ A camera — you\'ll want photos!',
               '❗ No choke chains or prong collars',
               '❗ No retractable leashes during judging',
+              '❗ No card payments — cash only',
             ].map((item, i) => (
               <div key={i} className="text-gray-300 text-sm bg-gray-950 rounded-lg px-4 py-2.5">
                 {item}
@@ -88,8 +120,16 @@ export default function EventInfo() {
           <div className="space-y-5">
             {[
               {
-                q: 'Is this event free to attend?',
-                a: 'Yes! The Love 4 Satos Dog Fashion Show is free to attend as a spectator. There may be a small registration fee for competing dogs — check the registration page for current info.'
+                q: 'How much does it cost?',
+                a: 'Dog contestant entry is $25 per dog. Spectator admission is $10 per person. All payments are cash only and collected on the day of the event — dogs at the check-in desk, spectators at the entrance.'
+              },
+              {
+                q: 'Why cash only?',
+                a: 'To keep things simple and avoid transaction fees, we are accepting cash payments only. Please plan accordingly and bring the exact amount if possible!'
+              },
+              {
+                q: 'Which contest categories does my dog compete in?',
+                a: 'All registered dogs automatically compete in every contest category. There\'s no need to select categories — just show up, pay your entry fee, and let the judges do the rest!'
               },
               {
                 q: 'Does my dog need to be a Sato to participate?',
@@ -97,7 +137,7 @@ export default function EventInfo() {
               },
               {
                 q: 'Can puppies participate?',
-                a: 'Yes! Puppies can enter the "Cutest Puppy" category. They must be at least 8 weeks old and have had their first round of vaccinations.'
+                a: 'Yes! Puppies are welcome. They must be at least 8 weeks old and have had their first round of vaccinations.'
               },
               {
                 q: 'What if my dog gets nervous around crowds?',
@@ -105,7 +145,7 @@ export default function EventInfo() {
               },
               {
                 q: 'Can more than one dog from the same family register?',
-                a: 'Absolutely! Each dog needs their own registration. Siblings can also enter the "Best Duo" category together.'
+                a: 'Absolutely! Each dog needs their own registration and entry fee ($25 each). Siblings can also be judged together in the Best Duo category.'
               },
               {
                 q: 'Where can I park?',

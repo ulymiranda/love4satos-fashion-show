@@ -98,7 +98,7 @@ export default function Home() {
                 <div className="absolute bottom-4 right-4 text-3xl opacity-30">🐾</div>
               </div>
               <div className="absolute -top-3 -right-3 bg-satos-gold text-black font-bold text-xs px-3 py-1 rounded-full transform rotate-12">
-                FREE EVENT!
+                FROM $10!
               </div>
             </div>
           </div>
@@ -122,38 +122,42 @@ export default function Home() {
           <div className="text-white text-lg font-medium">
             🐾 <strong>{dogCount}</strong> {dogCount === 1 ? 'dog has' : 'dogs have'} already signed up for the red carpet!
           </div>
-          <Link to="/register" className="bg-white text-satos-red font-bold px-6 py-2 rounded-full hover:bg-satos-gold transition-colors shrink-0">
-            Join Them →
-          </Link>
+          <div className="flex gap-2 flex-wrap justify-center">
+            <Link to="/register" className="bg-white text-satos-red font-bold px-5 py-2 rounded-full hover:bg-satos-gold transition-colors shrink-0 text-sm">
+              Enter Your Dog →
+            </Link>
+            <Link to="/register?tab=spectator" className="bg-satos-gold text-black font-bold px-5 py-2 rounded-full hover:bg-yellow-300 transition-colors shrink-0 text-sm">
+              Buy Tickets →
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Contest Categories */}
+      {/* Pricing / Admission */}
       <section className="py-16 px-4 bg-black">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="section-title">Contest Categories</h2>
+        <div className="max-w-4xl mx-auto">
+          <h2 className="section-title">Admission</h2>
           <div className="gold-divider"></div>
-          <p className="text-center text-gray-400 mb-10">Compete in one or more of these glamorous categories</p>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[
-              { icon: '🏆', name: 'Best in Show' },
-              { icon: '👗', name: 'Most Fashionable' },
-              { icon: '😂', name: 'Funniest' },
-              { icon: '💎', name: 'Most Glamorous' },
-              { icon: '🎩', name: 'Best Trick' },
-              { icon: '📖', name: 'Best Story' },
-              { icon: '👫', name: 'Best Duo' },
-              { icon: '🧵', name: 'Best Handmade' },
-              { icon: '🐶', name: 'Cutest Puppy' },
-              { icon: '⭐', name: 'Senior Dog Star' },
-              { icon: '✨', name: 'Most Charming' },
-            ].map(cat => (
-              <div key={cat.name} className="card-dark text-center hover:border-satos-gold transition-colors">
-                <div className="text-3xl mb-2">{cat.icon}</div>
-                <div className="text-sm font-medium text-gray-200">{cat.name}</div>
-              </div>
-            ))}
+          <p className="text-center text-gray-400 mb-10">Cash only — paid at the door on event day</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gradient-to-br from-satos-red to-red-900 rounded-2xl p-8 text-center border border-satos-gold/40">
+              <div className="text-6xl mb-4">🐾</div>
+              <div className="text-satos-gold font-serif font-black text-5xl mb-2">$25</div>
+              <div className="text-white font-bold text-xl mb-2">Dog Contestant Entry</div>
+              <p className="text-red-200 text-sm mb-4">Per dog · Cash only · Paid at check-in</p>
+              <p className="text-red-100 text-xs">
+                All registered dogs compete in every contest category automatically!
+              </p>
+            </div>
+            <div className="bg-gray-900 rounded-2xl p-8 text-center border border-satos-gold/40">
+              <div className="text-6xl mb-4">🎟️</div>
+              <div className="text-satos-gold font-serif font-black text-5xl mb-2">$10</div>
+              <div className="text-white font-bold text-xl mb-2">Spectator Admission</div>
+              <p className="text-gray-400 text-sm mb-4">Per person · Cash only · Paid at the door</p>
+              <p className="text-gray-500 text-xs">
+                Come cheer on the contestants and enjoy the show!
+              </p>
+            </div>
           </div>
         </div>
       </section>
