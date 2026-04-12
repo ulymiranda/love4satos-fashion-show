@@ -27,9 +27,11 @@ export default function Header() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-2 border-l border-gray-700 pl-3">
-            <div className="w-8 h-8 rounded bg-white flex items-center justify-center text-xs font-bold text-black leading-tight text-center px-1">
-              <span>TBS</span>
-            </div>
+            <img
+              src="/baldwin-logo.png"
+              alt="The Baldwin School of Puerto Rico"
+              className="w-10 h-10 rounded-full object-contain bg-white p-0.5"
+            />
             <div className="text-gray-300 text-xs leading-tight">
               <div>The Baldwin School</div>
               <div className="text-gray-500">of Puerto Rico</div>
