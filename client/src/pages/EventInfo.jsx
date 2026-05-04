@@ -11,12 +11,12 @@ export default function EventInfo() {
         {/* Admission Pricing */}
         <section className="mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gradient-to-br from-satos-red to-red-900 rounded-2xl p-6 text-center border border-satos-gold/40">
+            <div className="bg-gradient-to-br from-satos-red to-satos-maroon rounded-2xl p-6 text-center border border-satos-gold/40">
               <div className="text-5xl mb-3">🐾</div>
               <div className="text-satos-gold font-serif font-black text-4xl mb-1">$25</div>
               <div className="text-white font-bold text-lg mb-2">Dog Contestant Entry</div>
-              <div className="text-red-200 text-sm">Per dog · Cash only · Paid at check-in</div>
-              <div className="mt-3 text-red-100 text-xs">
+              <div className="text-gray-300 text-sm">Per dog · Cash only · Paid at check-in</div>
+              <div className="mt-3 text-gray-400 text-xs">
                 Includes participation in all contest categories
               </div>
             </div>

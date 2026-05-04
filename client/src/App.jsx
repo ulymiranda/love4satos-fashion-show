@@ -12,7 +12,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-black">
       <Toaster position="top-center" toastOptions={{
-        style: { background: '#1a0000', color: '#FFD700', border: '1px solid #C0392B' }
+        style: { background: '#0D0509', color: '#C0C0C0', border: '1px solid #7B1D32' }
       }} />
       <Header />
       <main className="flex-1">

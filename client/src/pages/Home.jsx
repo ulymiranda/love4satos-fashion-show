@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import axios from '../api'
 import CountdownTimer from '../components/CountdownTimer'
 
-const shareText = encodeURIComponent('Join us at the Love 4 Satos Dog Fashion Show! May 9, 2026 at The Baldwin School of Puerto Rico VPAC 🐾✨ #Love4Satos #DogFashionShow')
+const shareText = encodeURIComponent('Join us at the Love 4 Satos Dog Fashion Show! May 9, 2026 at The Baldwin School of Puerto Rico VPAC 🐾 #Love4Satos #DogFashionShow')
 
 export default function Home() {
   const [dogCount, setDogCount] = useState(0)
@@ -18,13 +18,13 @@ export default function Home() {
     <div>
       {/* Hero Section */}
       <section className="relative bg-black overflow-hidden">
-        {/* Background pattern */}
+        {/* Subtle burgundy background pattern */}
         <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: 'repeating-linear-gradient(45deg, #C0392B 0, #C0392B 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px' }}>
+          style={{ backgroundImage: 'repeating-linear-gradient(45deg, #7B1D32 0, #7B1D32 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px' }}>
         </div>
 
-        {/* Gold top strip */}
-        <div className="h-1 bg-gradient-to-r from-satos-gold via-yellow-200 to-satos-gold"></div>
+        {/* Silver top strip */}
+        <div className="h-1 bg-gradient-to-r from-satos-gold via-white to-satos-gold"></div>
 
         <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -79,9 +79,9 @@ export default function Home() {
               )}
             </div>
 
-            {/* Right: poster/image placeholder */}
+            {/* Right: event poster card */}
             <div className="relative">
-              <div className="bg-gradient-to-br from-satos-red via-red-900 to-black rounded-2xl p-8 border-2 border-satos-gold aspect-[3/4] flex flex-col items-center justify-center text-center shadow-2xl shadow-red-900/50">
+              <div className="bg-gradient-to-br from-satos-red via-satos-maroon to-black rounded-2xl p-8 border-2 border-satos-gold aspect-[3/4] flex flex-col items-center justify-center text-center shadow-2xl shadow-satos-red/30">
                 <div className="text-8xl mb-4">🎬</div>
                 <div className="text-satos-gold font-serif font-black text-3xl mb-2">LOVE 4 SATOS</div>
                 <div className="text-white font-bold text-xl mb-1">DOG FASHION SHOW</div>
@@ -91,21 +91,20 @@ export default function Home() {
                 <div className="text-gray-300 text-sm mb-1">5:30 – 8:00 PM</div>
                 <div className="text-gray-300 text-sm">Baldwin School VPAC</div>
                 <div className="text-gray-400 text-xs mt-4">Puerto Rico</div>
-                {/* Decorative paws */}
                 <div className="absolute top-4 left-4 text-3xl opacity-30">🐾</div>
                 <div className="absolute top-4 right-4 text-3xl opacity-30">🐾</div>
                 <div className="absolute bottom-4 left-4 text-3xl opacity-30">🐾</div>
                 <div className="absolute bottom-4 right-4 text-3xl opacity-30">🐾</div>
               </div>
-              <div className="absolute -top-3 -right-3 bg-satos-gold text-black font-bold text-xs px-3 py-1 rounded-full transform rotate-12">
+              <div className="absolute -top-3 -right-3 bg-white text-satos-red font-bold text-xs px-3 py-1 rounded-full transform rotate-12 border border-satos-gold">
                 FROM $10!
               </div>
             </div>
           </div>
         </div>
 
-        {/* Gold bottom strip */}
-        <div className="h-1 bg-gradient-to-r from-satos-gold via-yellow-200 to-satos-gold"></div>
+        {/* Silver bottom strip */}
+        <div className="h-1 bg-gradient-to-r from-satos-gold via-white to-satos-gold"></div>
       </section>
 
       {/* Countdown Section */}
@@ -123,10 +122,10 @@ export default function Home() {
             🐾 <strong>{dogCount}</strong> {dogCount === 1 ? 'dog has' : 'dogs have'} already signed up for the red carpet!
           </div>
           <div className="flex gap-2 flex-wrap justify-center">
-            <Link to="/register" className="bg-white text-satos-red font-bold px-5 py-2 rounded-full hover:bg-satos-gold transition-colors shrink-0 text-sm">
+            <Link to="/register" className="bg-white text-satos-red font-bold px-5 py-2 rounded-full hover:bg-gray-100 transition-colors shrink-0 text-sm">
               Enter Your Dog →
             </Link>
-            <Link to="/register?tab=spectator" className="bg-satos-gold text-black font-bold px-5 py-2 rounded-full hover:bg-yellow-300 transition-colors shrink-0 text-sm">
+            <Link to="/register?tab=spectator" className="bg-satos-gold text-satos-red font-bold px-5 py-2 rounded-full hover:bg-white transition-colors shrink-0 text-sm">
               Buy Tickets →
             </Link>
           </div>
@@ -140,12 +139,12 @@ export default function Home() {
           <div className="gold-divider"></div>
           <p className="text-center text-gray-400 mb-10">Cash only — paid at the door on event day</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gradient-to-br from-satos-red to-red-900 rounded-2xl p-8 text-center border border-satos-gold/40">
+            <div className="bg-gradient-to-br from-satos-red to-satos-maroon rounded-2xl p-8 text-center border border-satos-gold/40">
               <div className="text-6xl mb-4">🐾</div>
               <div className="text-satos-gold font-serif font-black text-5xl mb-2">$25</div>
               <div className="text-white font-bold text-xl mb-2">Dog Contestant Entry</div>
-              <p className="text-red-200 text-sm mb-4">Per dog · Cash only · Paid at check-in</p>
-              <p className="text-red-100 text-xs">
+              <p className="text-gray-300 text-sm mb-4">Per dog · Cash only · Paid at check-in</p>
+              <p className="text-gray-400 text-xs">
                 All registered dogs compete in every contest category automatically!
               </p>
             </div>
@@ -191,21 +190,13 @@ export default function Home() {
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-2xl font-serif font-bold text-white mb-3">Spread the Word! 🌟</h2>
           <p className="text-gray-400 mb-6">Share the event with fellow dog lovers</p>
-          <div className="flex justify-center gap-4">
-            <a
-              href="https://www.instagram.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white px-6 py-3 rounded-full font-bold hover:opacity-90 transition"
-            >
+          <div className="flex justify-center gap-4 flex-wrap">
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white px-6 py-3 rounded-full font-bold hover:opacity-90 transition">
               <span>📸</span> Share on Instagram
             </a>
-            <a
-              href={`https://wa.me/?text=${shareText}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-full font-bold hover:bg-green-500 transition"
-            >
+            <a href={`https://wa.me/?text=${shareText}`} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-green-700 text-white px-6 py-3 rounded-full font-bold hover:bg-green-600 transition">
               <span>💬</span> Share on WhatsApp
             </a>
           </div>
@@ -238,12 +229,8 @@ export default function Home() {
             <iframe
               title="Baldwin School VPAC Location"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3785.4!2d-66.0615!3d18.4655!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c036a8fa2f1a6f5%3A0x1234567890!2sThe+Baldwin+School+of+Puerto+Rico!5e0!3m2!1sen!2sus!4v1"
-              width="100%"
-              height="400"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
+              width="100%" height="400" style={{ border: 0 }}
+              allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
           </div>
           <div className="mt-4 text-center text-gray-400 text-sm">

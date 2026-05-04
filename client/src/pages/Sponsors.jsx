@@ -19,7 +19,7 @@ export default function Sponsors() {
     {
       tier: '🥈 Gold Sponsor',
       price: 'Contact for pricing',
-      color: 'from-yellow-500 to-yellow-300',
+      color: 'from-gray-400 to-gray-200',
       border: 'border-satos-gold',
       textColor: 'text-satos-gold',
       perks: [
@@ -46,9 +46,9 @@ export default function Sponsors() {
     {
       tier: '🏅 Bronze Sponsor',
       price: 'Contact for pricing',
-      color: 'from-orange-700 to-orange-500',
-      border: 'border-orange-700',
-      textColor: 'text-orange-400',
+      color: 'from-gray-600 to-gray-500',
+      border: 'border-gray-600',
+      textColor: 'text-gray-400',
       perks: [
         'Name listed in the printed program',
         'Name listed on the event website',
@@ -150,10 +150,10 @@ export default function Sponsors() {
         </section>
 
         {/* Contact CTA */}
-        <section className="bg-gradient-to-br from-satos-red to-red-950 rounded-2xl p-8 md:p-12 text-center border border-satos-gold/20">
+        <section className="bg-gradient-to-br from-satos-red to-satos-maroon rounded-2xl p-8 md:p-12 text-center border border-satos-gold/20">
           <div className="text-5xl mb-4">🌟</div>
           <h2 className="text-white font-serif font-black text-3xl md:text-4xl mb-3">Ready to Partner With Us?</h2>
-          <p className="text-red-200 mb-8 max-w-xl mx-auto">
+          <p className="text-gray-300 mb-8 max-w-xl mx-auto">
             Reach out today to reserve your sponsorship tier before the event. Spots are limited and
             we'd love to feature your brand at this one-of-a-kind evening.
           </p>
@@ -161,7 +161,7 @@ export default function Sponsors() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto mb-8">
             <div className="bg-black/40 rounded-2xl p-6 text-left">
               <div className="text-satos-gold font-bold mb-3 text-lg">Love 4 Satos</div>
-              <div className="space-y-2 text-red-200 text-sm">
+              <div className="space-y-2 text-gray-300 text-sm">
                 <div className="flex items-center gap-2">
                   <span>📧</span>
                   <a href="mailto:events@love4satos.org" className="hover:text-white transition-colors">
@@ -178,7 +178,7 @@ export default function Sponsors() {
             </div>
             <div className="bg-black/40 rounded-2xl p-6 text-left">
               <div className="text-satos-gold font-bold mb-3 text-lg">The Baldwin School</div>
-              <div className="space-y-2 text-red-200 text-sm">
+              <div className="space-y-2 text-gray-300 text-sm">
                 <div className="flex items-center gap-2">
                   <span>📧</span>
                   <a href="mailto:development@baldwin.edu.pr" className="hover:text-white transition-colors">
@@ -197,7 +197,7 @@ export default function Sponsors() {
 
           <div className="bg-black/30 rounded-xl p-5 max-w-lg mx-auto">
             <div className="text-satos-gold font-bold mb-2">📅 Sponsorship Deadline</div>
-            <p className="text-red-200 text-sm">
+            <p className="text-gray-300 text-sm">
               To ensure your logo and name appear on all printed materials, please contact us
               by <strong className="text-white">April 25, 2026</strong>. Digital placements can be arranged closer to the event date.
             </p>

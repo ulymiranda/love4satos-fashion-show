@@ -4,14 +4,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        'satos-red': '#C0392B',
-        'satos-gold': '#FFD700',
-        'satos-dark': '#1a0000',
-        'satos-maroon': '#8B0000',
+        'satos-red':    '#7B1D32',   // Baldwin burgundy
+        'satos-gold':   '#C0C0C0',   // Silver (replaces gold)
+        'satos-dark':   '#0D0509',   // Near-black with burgundy tint
+        'satos-maroon': '#5A1525',   // Deep dark burgundy
       },
       fontFamily: {
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
-        sans: ['"Inter"', 'system-ui', 'sans-serif'],
+        sans:  ['"Inter"', 'system-ui', 'sans-serif'],
       }
     }
   },

@@ -12,12 +12,17 @@
 }
 
 @layer components {
+  /* Burgundy primary button */
   .btn-primary {
-    @apply bg-satos-red hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-red-500/50;
+    @apply bg-satos-red hover:bg-satos-maroon text-white font-bold py-3 px-8 rounded-full
+           transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-satos-red/30;
   }
+  /* White secondary button (replaces gold) */
   .btn-gold {
-    @apply bg-satos-gold hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/50;
+    @apply bg-white hover:bg-gray-100 text-satos-red font-bold py-3 px-8 rounded-full
+           transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-gray-300/50;
   }
+  /* Silver divider */
   .gold-divider {
     @apply w-24 h-1 bg-satos-gold mx-auto my-6;
   }
@@ -32,21 +37,17 @@
 /* Sparkle animation */
 @keyframes sparkle {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
 }
+.sparkle { animation: sparkle 2s ease-in-out infinite; }
 
-.sparkle {
-  animation: sparkle 2s ease-in-out infinite;
-}
-
-/* Red carpet shimmer */
+/* Silver shimmer (replaces gold) */
 @keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
 }
-
 .shimmer-text {
-  background: linear-gradient(90deg, #FFD700 25%, #fff 50%, #FFD700 75%);
+  background: linear-gradient(90deg, #C0C0C0 25%, #ffffff 50%, #C0C0C0 75%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -54,7 +55,7 @@
   animation: shimmer 3s linear infinite;
 }
 
-/* Countdown flip */
+/* Countdown box */
 .countdown-box {
   @apply bg-black border-2 border-satos-gold rounded-lg flex flex-col items-center justify-center;
   min-width: 80px;

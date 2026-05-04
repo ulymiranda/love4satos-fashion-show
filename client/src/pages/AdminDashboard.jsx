@@ -1,118 +1,139 @@
-import { useState, useEffect } from 'react'
-import axios from '../api'
+import { useState, useEffect, useCallback } from 'react'
+import axios from 'axios'
 import toast from 'react-hot-toast'
 
+// Use absolute API URL in production, relative proxy in dev
+const API = import.meta.env.VITE_API_URL || ''
+
+function authHeaders() {
+  const token = localStorage.getItem('adminToken')
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+function api(method, path, data) {
+  return axios({ method, url: `${API}${path}`, data, headers: authHeaders(), withCredentials: false })
+}
+
 export default function AdminDashboard() {
-  const [isAdmin, setIsAdmin] = useState(false)
+  const [isAdmin, setIsAdmin]   = useState(!!localStorage.getItem('adminToken'))
   const [password, setPassword] = useState('')
-  const [activeTab, setActiveTab] = useState('dogs') // 'dogs' | 'spectators'
+  const [activeTab, setActiveTab] = useState('dogs')
 
   const [registrations, setRegistrations] = useState([])
-  const [spectators, setSpectators] = useState([])
-  const [stats, setStats] = useState(null)
+  const [spectators, setSpectators]       = useState([])
+  const [stats, setStats]     = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const [dogSearch, setDogSearch] = useState('')
-  const [dogFilter, setDogFilter] = useState('all')
+  const [dogSearch, setDogSearch]   = useState('')
+  const [dogFilter, setDogFilter]   = useState('all')
   const [specSearch, setSpecSearch] = useState('')
   const [specFilter, setSpecFilter] = useState('all')
 
-  useEffect(() => {
-    axios.get('/api/admin/session', { withCredentials: true })
-      .then(r => { if (r.data.isAdmin) { setIsAdmin(true); loadData() } })
-      .catch(() => {})
+  const loadData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const [regRes, specRes, statsRes] = await Promise.all([
+        api('get', '/api/admin/registrations'),
+        api('get', '/api/admin/spectators'),
+        api('get', '/api/admin/stats'),
+      ])
+      setRegistrations(regRes.data)
+      setSpectators(specRes.data)
+      setStats(statsRes.data)
+    } catch (err) {
+      if (err.response?.status === 401) {
+        localStorage.removeItem('adminToken')
+        setIsAdmin(false)
+        toast.error('Session expired — please log in again')
+      } else {
+        toast.error('Failed to load data')
+      }
+    } finally {
+      setLoading(false)
+    }
   }, [])
+
+  useEffect(() => {
+    if (isAdmin) loadData()
+  }, [isAdmin, loadData])
 
   async function handleLogin(e) {
     e.preventDefault()
     try {
-      await axios.post('/api/admin/login', { password }, { withCredentials: true })
+      const res = await axios.post(`${API}/api/admin/login`, { password })
+      localStorage.setItem('adminToken', res.data.token)
       setIsAdmin(true)
-      loadData()
-      toast.success('Welcome back, admin!')
+      toast.success('Welcome back, admin! 🐾')
     } catch {
       toast.error('Incorrect password')
     }
   }
 
-  async function handleLogout() {
-    await axios.post('/api/admin/logout', {}, { withCredentials: true })
+  function handleLogout() {
+    api('post', '/api/admin/logout').catch(() => {})
+    localStorage.removeItem('adminToken')
     setIsAdmin(false)
     setRegistrations([])
     setSpectators([])
     setStats(null)
   }
 
-  async function loadData() {
-    setLoading(true)
-    try {
-      const [regRes, specRes, statsRes] = await Promise.all([
-        axios.get('/api/admin/registrations', { withCredentials: true }),
-        axios.get('/api/admin/spectators', { withCredentials: true }),
-        axios.get('/api/admin/stats', { withCredentials: true }),
-      ])
-      setRegistrations(regRes.data)
-      setSpectators(specRes.data)
-      setStats(statsRes.data)
-    } catch {
-      toast.error('Failed to load data')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   async function toggleDogCheckIn(reg) {
     try {
-      await axios.patch(`/api/admin/registrations/${reg.id}/checkin`, { checked_in: !reg.checked_in }, { withCredentials: true })
+      await api('patch', `/api/admin/registrations/${reg.id}/checkin`, { checked_in: !reg.checked_in })
       setRegistrations(regs => regs.map(r => r.id === reg.id ? { ...r, checked_in: reg.checked_in ? 0 : 1 } : r))
       setStats(s => s ? { ...s, checkedInDogs: s.checkedInDogs + (reg.checked_in ? -1 : 1) } : s)
-    } catch { toast.error('Failed to update') }
+    } catch { toast.error('Failed to update check-in') }
   }
 
   async function toggleSpecCheckIn(spec) {
     try {
-      await axios.patch(`/api/admin/spectators/${spec.id}/checkin`, { checked_in: !spec.checked_in }, { withCredentials: true })
+      await api('patch', `/api/admin/spectators/${spec.id}/checkin`, { checked_in: !spec.checked_in })
       setSpectators(specs => specs.map(s => s.id === spec.id ? { ...s, checked_in: spec.checked_in ? 0 : 1 } : s))
       setStats(s => s ? { ...s, checkedInSpectators: s.checkedInSpectators + (spec.checked_in ? -1 : 1) } : s)
-    } catch { toast.error('Failed to update') }
+    } catch { toast.error('Failed to update check-in') }
   }
 
   async function deleteDog(id) {
     if (!window.confirm('Delete this dog registration?')) return
     try {
-      await axios.delete(`/api/admin/registrations/${id}`, { withCredentials: true })
+      await api('delete', `/api/admin/registrations/${id}`)
       setRegistrations(regs => regs.filter(r => r.id !== id))
       toast.success('Deleted')
     } catch { toast.error('Failed to delete') }
   }
 
   async function deleteSpectator(id) {
-    if (!window.confirm('Delete this spectator registration?')) return
+    if (!window.confirm('Delete this spectator?')) return
     try {
-      await axios.delete(`/api/admin/spectators/${id}`, { withCredentials: true })
+      await api('delete', `/api/admin/spectators/${id}`)
       setSpectators(specs => specs.filter(s => s.id !== id))
       toast.success('Deleted')
     } catch { toast.error('Failed to delete') }
   }
 
-  // ── Login screen ────────────────────────────────────────────────────────────
+  // Export with token in URL for direct download links
+  function exportUrl(path) {
+    const token = localStorage.getItem('adminToken') || ''
+    return `${API}${path}?token=${encodeURIComponent(token)}`
+  }
+
+  // ── Login screen ──────────────────────────────────────────────────────────
   if (!isAdmin) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center px-4">
-        <div className="max-w-sm w-full">
-          <div className="card-dark text-center">
-            <div className="text-4xl mb-4">🔐</div>
-            <h1 className="text-white font-serif font-bold text-2xl mb-2">Admin Access</h1>
-            <p className="text-gray-500 text-sm mb-6">Enter your admin password to continue</p>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <input
-                type="password" value={password} onChange={e => setPassword(e.target.value)}
-                placeholder="Admin password" required
-                className="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-satos-gold focus:outline-none"
-              />
-              <button type="submit" className="w-full btn-gold">Login</button>
-            </form>
-          </div>
+        <div className="max-w-sm w-full card-dark text-center">
+          <div className="text-4xl mb-4">🔐</div>
+          <h1 className="text-white font-serif font-bold text-2xl mb-2">Admin Access</h1>
+          <p className="text-gray-500 text-sm mb-6">Love 4 Satos — Event Dashboard</p>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input
+              type="password" value={password} onChange={e => setPassword(e.target.value)}
+              placeholder="Admin password" required autoFocus
+              className="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-satos-gold focus:outline-none"
+            />
+            <button type="submit" className="w-full btn-gold">Login</button>
+          </form>
         </div>
       </div>
     )
@@ -120,17 +141,17 @@ export default function AdminDashboard() {
 
   const filteredDogs = registrations.filter(r => {
     const s = dogSearch.toLowerCase()
-    const matchSearch = !s || r.dog_name.toLowerCase().includes(s) || r.owner_name.toLowerCase().includes(s) ||
+    const match = !s || r.dog_name.toLowerCase().includes(s) || r.owner_name.toLowerCase().includes(s) ||
       r.email.toLowerCase().includes(s) || String(r.dog_number).includes(s)
-    const matchFilter = dogFilter === 'all' || (dogFilter === 'checked' && r.checked_in) || (dogFilter === 'unchecked' && !r.checked_in)
-    return matchSearch && matchFilter
+    const f = dogFilter === 'all' || (dogFilter === 'checked' && r.checked_in) || (dogFilter === 'unchecked' && !r.checked_in)
+    return match && f
   })
 
   const filteredSpecs = spectators.filter(s => {
     const q = specSearch.toLowerCase()
-    const matchSearch = !q || s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q)
-    const matchFilter = specFilter === 'all' || (specFilter === 'checked' && s.checked_in) || (specFilter === 'unchecked' && !s.checked_in)
-    return matchSearch && matchFilter
+    const match = !q || s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q)
+    const f = specFilter === 'all' || (specFilter === 'checked' && s.checked_in) || (specFilter === 'unchecked' && !s.checked_in)
+    return match && f
   })
 
   return (
@@ -147,13 +168,13 @@ export default function AdminDashboard() {
             <button onClick={loadData} className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
               ↻ Refresh
             </button>
-            <button onClick={handleLogout} className="bg-satos-red hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+            <button onClick={handleLogout} className="bg-satos-red hover:bg-satos-maroon text-white px-4 py-2 rounded-lg text-sm transition-colors">
               Logout
             </button>
           </div>
         </div>
 
-        {/* Stats cards */}
+        {/* Stats */}
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="card-dark text-center">
@@ -167,18 +188,14 @@ export default function AdminDashboard() {
               <div className="text-gray-600 text-xs">{stats.totalSpectators} registrations</div>
             </div>
             <div className="card-dark text-center">
-              <div className="text-green-400 font-serif font-black text-4xl">
-                ${stats.totalRevenue.toLocaleString()}
-              </div>
+              <div className="text-green-400 font-serif font-black text-4xl">${stats.totalRevenue.toLocaleString()}</div>
               <div className="text-gray-400 text-sm mt-1">Expected Cash</div>
               <div className="text-gray-600 text-xs">${stats.dogRevenue} dogs + ${stats.spectatorRevenue} tickets</div>
             </div>
             <div className="card-dark text-center">
-              <div className="text-white font-serif font-black text-4xl">
-                {stats.totalDogs + stats.totalTickets}
-              </div>
+              <div className="text-white font-serif font-black text-4xl">{stats.totalDogs + stats.totalTickets}</div>
               <div className="text-gray-400 text-sm mt-1">Total Attendees</div>
-              <div className="text-gray-600 text-xs">Dogs + spectators</div>
+              <div className="text-gray-600 text-xs">Contestants + spectators</div>
             </div>
           </div>
         )}
@@ -186,7 +203,7 @@ export default function AdminDashboard() {
         {/* Theme distribution */}
         {stats && stats.themeDistribution.length > 0 && (
           <div className="card-dark mb-8">
-            <h2 className="text-satos-gold font-serif font-bold text-xl mb-4">Costume Themes</h2>
+            <h2 className="text-satos-gold font-serif font-bold text-xl mb-4">Costume Themes Breakdown</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {stats.themeDistribution.map(t => (
                 <div key={t.costume_theme} className="bg-gray-950 rounded-lg px-4 py-3 flex items-center justify-between">
@@ -202,29 +219,25 @@ export default function AdminDashboard() {
         <div className="flex rounded-xl overflow-hidden border border-gray-700 mb-6">
           <button
             onClick={() => setActiveTab('dogs')}
-            className={`flex-1 py-3 text-sm font-bold transition-all ${activeTab === 'dogs' ? 'bg-satos-red text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}`}
-          >
+            className={`flex-1 py-3 text-sm font-bold transition-all ${activeTab === 'dogs' ? 'bg-satos-red text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}`}>
             🐾 Dog Registrations ({registrations.length})
           </button>
           <button
             onClick={() => setActiveTab('spectators')}
-            className={`flex-1 py-3 text-sm font-bold border-l border-gray-700 transition-all ${activeTab === 'spectators' ? 'bg-satos-red text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}`}
-          >
+            className={`flex-1 py-3 text-sm font-bold border-l border-gray-700 transition-all ${activeTab === 'spectators' ? 'bg-satos-red text-white' : 'bg-gray-900 text-gray-400 hover:text-white'}`}>
             🎟️ Spectators ({spectators.length})
           </button>
         </div>
 
-        {/* ── DOGS TAB ── */}
+        {/* ── DOGS ── */}
         {activeTab === 'dogs' && (
           <div className="card-dark overflow-hidden">
             <div className="flex flex-wrap gap-3 mb-4 items-center justify-between">
               <h2 className="text-satos-gold font-serif font-bold text-xl">Dogs ({filteredDogs.length})</h2>
-              <div className="flex gap-2 flex-wrap">
-                <a href="/api/admin/registrations/export" target="_blank" rel="noopener noreferrer"
-                  className="bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs transition-colors">
-                  ↓ Export CSV
-                </a>
-              </div>
+              <a href={exportUrl('/api/admin/registrations/export')} target="_blank" rel="noopener noreferrer"
+                className="bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs transition-colors">
+                ↓ Export CSV
+              </a>
             </div>
             <div className="flex flex-wrap gap-3 mb-4">
               <input type="text" value={dogSearch} onChange={e => setDogSearch(e.target.value)}
@@ -238,9 +251,7 @@ export default function AdminDashboard() {
                 <option value="unchecked">Not Checked In</option>
               </select>
             </div>
-            {loading ? (
-              <div className="text-center py-8 text-gray-500">Loading...</div>
-            ) : (
+            {loading ? <div className="text-center py-8 text-gray-500">Loading…</div> : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -276,7 +287,7 @@ export default function AdminDashboard() {
                         </td>
                         <td className="py-3">
                           <div className="flex gap-2">
-                            <a href={`/api/registrations/${reg.dog_number}/badge`} target="_blank" rel="noopener noreferrer"
+                            <a href={`${API}/api/registrations/${reg.dog_number}/badge`} target="_blank" rel="noopener noreferrer"
                               className="text-satos-gold hover:underline text-xs">Badge</a>
                             <button onClick={() => deleteDog(reg.id)} className="text-red-500 hover:text-red-400 text-xs">Delete</button>
                           </div>
@@ -285,7 +296,7 @@ export default function AdminDashboard() {
                     ))}
                     {filteredDogs.length === 0 && (
                       <tr><td colSpan={7} className="text-center text-gray-600 py-8">
-                        {registrations.length === 0 ? 'No dog registrations yet.' : 'No results.'}
+                        {registrations.length === 0 ? 'No dog registrations yet.' : 'No results match your search.'}
                       </td></tr>
                     )}
                   </tbody>
@@ -295,12 +306,12 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* ── SPECTATORS TAB ── */}
+        {/* ── SPECTATORS ── */}
         {activeTab === 'spectators' && (
           <div className="card-dark overflow-hidden">
             <div className="flex flex-wrap gap-3 mb-4 items-center justify-between">
               <h2 className="text-satos-gold font-serif font-bold text-xl">Spectators ({filteredSpecs.length})</h2>
-              <a href="/api/admin/spectators/export" target="_blank" rel="noopener noreferrer"
+              <a href={exportUrl('/api/admin/spectators/export')} target="_blank" rel="noopener noreferrer"
                 className="bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs transition-colors">
                 ↓ Export CSV
               </a>
@@ -317,9 +328,7 @@ export default function AdminDashboard() {
                 <option value="unchecked">Not Checked In</option>
               </select>
             </div>
-            {loading ? (
-              <div className="text-center py-8 text-gray-500">Loading...</div>
-            ) : (
+            {loading ? <div className="text-center py-8 text-gray-500">Loading…</div> : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -341,9 +350,7 @@ export default function AdminDashboard() {
                           <span className="text-satos-gold font-bold">{spec.tickets}</span>
                           <span className="text-gray-500 text-xs ml-1">ticket{spec.tickets > 1 ? 's' : ''}</span>
                         </td>
-                        <td className="py-3 pr-4">
-                          <span className="text-green-400 font-bold">${spec.tickets * 10}</span>
-                        </td>
+                        <td className="py-3 pr-4 text-green-400 font-bold">${spec.tickets * 10}</td>
                         <td className="py-3 pr-4">
                           <button onClick={() => toggleSpecCheckIn(spec)}
                             className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${spec.checked_in ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}>
