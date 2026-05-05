@@ -1,18 +1,9 @@
-import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import axios from '../api'
 import CountdownTimer from '../components/CountdownTimer'
 
 const shareText = encodeURIComponent('Join us at the Love 4 Satos Dog Fashion Show! May 9, 2026 at The Baldwin School of Puerto Rico VPAC 🐾 #Love4Satos #DogFashionShow')
 
 export default function Home() {
-  const [dogCount, setDogCount] = useState(0)
-
-  useEffect(() => {
-    axios.get('/api/registrations/count')
-      .then(r => setDogCount(r.data.count))
-      .catch(() => {})
-  }, [])
 
   return (
     <div>
@@ -69,14 +60,6 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Dog count */}
-              {dogCount > 0 && (
-                <div className="inline-flex items-center gap-2 bg-satos-red/20 border border-satos-red/50 rounded-full px-4 py-2 text-sm">
-                  <span className="text-satos-gold font-bold text-lg">{dogCount}</span>
-                  <span className="text-gray-300">dogs registered so far!</span>
-                  <span className="sparkle">🌟</span>
-                </div>
-              )}
             </div>
 
             {/* Right: event poster card */}
@@ -115,22 +98,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Registration Counter Banner */}
-      <section className="bg-satos-red py-5 px-4">
-        <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-center gap-4 text-center">
-          <div className="text-white text-lg font-medium">
-            🐾 <strong>{dogCount}</strong> {dogCount === 1 ? 'dog has' : 'dogs have'} already signed up for the red carpet!
-          </div>
-          <div className="flex gap-2 flex-wrap justify-center">
-            <Link to="/register" className="bg-white text-satos-red font-bold px-5 py-2 rounded-full hover:bg-gray-100 transition-colors shrink-0 text-sm">
-              Enter Your Dog →
-            </Link>
-            <Link to="/register?tab=spectator" className="bg-satos-gold text-satos-red font-bold px-5 py-2 rounded-full hover:bg-white transition-colors shrink-0 text-sm">
-              Buy Tickets →
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* Pricing / Admission */}
       <section className="py-16 px-4 bg-black">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import axios from '../api'
 import toast from 'react-hot-toast'
 
@@ -14,7 +14,6 @@ const COSTUME_THEMES = [
 
 export default function Registration() {
   const [tab, setTab] = useState('dog') // 'dog' | 'spectator'
-  const [dogCount, setDogCount] = useState(0)
 
   // Dog registration form
   const [dogForm, setDogForm] = useState({
@@ -31,10 +30,6 @@ export default function Registration() {
   })
   const [specSubmitting, setSpecSubmitting] = useState(false)
   const [specSuccess, setSpecSuccess] = useState(null)
-
-  useEffect(() => {
-    axios.get('/api/registrations/count').then(r => setDogCount(r.data.count)).catch(() => {})
-  }, [])
 
   function handleDogChange(e) {
     const { name, value } = e.target
@@ -83,7 +78,9 @@ export default function Registration() {
           <div className="bg-gray-900 border-2 border-satos-gold rounded-2xl p-8">
             <div className="text-8xl mb-4">🎉</div>
             <h2 className="text-satos-gold font-serif font-black text-4xl mb-2">You're In!</h2>
-            <p className="text-white text-lg mb-4">{dogSuccess.message}</p>
+            <p className="text-white text-lg mb-4">
+              Registration confirmed for <strong>{dogSuccess.dog_name || 'your dog'}</strong>! 🐾
+            </p>
 
             {/* Cash payment reminder */}
             <div className="bg-satos-red/20 border border-satos-red rounded-xl p-4 mb-5 text-left">
@@ -94,24 +91,10 @@ export default function Registration() {
               </p>
             </div>
 
-            <div className="bg-black border border-satos-gold rounded-xl p-5 mb-6">
-              <div className="text-gray-400 text-sm mb-1">Your Contestant Number</div>
-              <div className="text-satos-gold font-serif font-black text-6xl">
-                #{String(dogSuccess.dog_number).padStart(3, '0')}
-              </div>
-            </div>
             <p className="text-gray-400 text-sm mb-6">
-              A confirmation email with your printable badge has been sent. See you on the red carpet!
+              A confirmation email has been sent to you. See you on the red carpet!
             </p>
             <div className="flex gap-3 justify-center flex-wrap">
-              <a
-                href={`/api/registrations/${dogSuccess.dog_number}/badge`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-gold"
-              >
-                Download Badge PDF
-              </a>
               <button onClick={() => setDogSuccess(null)} className="btn-primary">
                 Register Another Dog
               </button>
@@ -167,11 +150,6 @@ export default function Registration() {
           </div>
           <h1 className="section-title">Register for the Show</h1>
           <div className="gold-divider"></div>
-          {dogCount > 0 && (
-            <p className="text-gray-400 mt-2">
-              Join <strong className="text-satos-gold">{dogCount}</strong> dogs already registered!
-            </p>
-          )}
         </div>
 
         {/* Tab switcher */}
