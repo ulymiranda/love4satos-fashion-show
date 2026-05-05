@@ -75,15 +75,20 @@ export default function Registration() {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center px-4 py-16">
         <div className="max-w-lg w-full text-center">
-          <div className="bg-gray-900 border-2 border-satos-gold rounded-2xl p-8">
-            <div className="text-8xl mb-4">🎉</div>
-            <h2 className="text-satos-gold font-serif font-black text-4xl mb-2">You're In!</h2>
-            <p className="text-white text-lg mb-4">
-              Registration confirmed for <strong>{dogSuccess.dog_name || 'your dog'}</strong>! 🐾
+          <div className="bg-gray-900 border-2 border-green-500 rounded-2xl p-8">
+            {/* Green checkmark */}
+            <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-5">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-white font-serif font-black text-4xl mb-2">Registration Complete!</h2>
+            <p className="text-green-400 text-lg mb-6">
+              <strong>{dogSuccess.dog_name || 'Your dog'}</strong> is officially on the list! 🐾
             </p>
 
             {/* Cash payment reminder */}
-            <div className="bg-satos-red/20 border border-satos-red rounded-xl p-4 mb-5 text-left">
+            <div className="bg-satos-red/20 border border-satos-red rounded-xl p-4 mb-6 text-left">
               <div className="text-satos-gold font-bold mb-1">💵 Payment Reminder</div>
               <p className="text-gray-300 text-sm">
                 Please bring <strong className="text-white">$25 cash</strong> on event day to complete your entry.
@@ -91,14 +96,9 @@ export default function Registration() {
               </p>
             </div>
 
-            <p className="text-gray-400 text-sm mb-6">
-              A confirmation email has been sent to you. See you on the red carpet!
-            </p>
-            <div className="flex gap-3 justify-center flex-wrap">
-              <button onClick={() => setDogSuccess(null)} className="btn-primary">
-                Register Another Dog
-              </button>
-            </div>
+            <button onClick={() => setDogSuccess(null)} className="btn-primary w-full">
+              Register Another Dog
+            </button>
           </div>
         </div>
       </div>
@@ -110,13 +110,20 @@ export default function Registration() {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center px-4 py-16">
         <div className="max-w-lg w-full text-center">
-          <div className="bg-gray-900 border-2 border-satos-gold rounded-2xl p-8">
-            <div className="text-8xl mb-4">🌟</div>
-            <h2 className="text-satos-gold font-serif font-black text-4xl mb-2">See You There!</h2>
-            <p className="text-white text-lg mb-4">{specSuccess.message}</p>
+          <div className="bg-gray-900 border-2 border-green-500 rounded-2xl p-8">
+            {/* Green checkmark */}
+            <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-5">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-white font-serif font-black text-4xl mb-2">Registration Complete!</h2>
+            <p className="text-green-400 text-lg mb-6">
+              Your {specSuccess.tickets} ticket{specSuccess.tickets > 1 ? 's are' : ' is'} reserved. See you at the show! 🌟
+            </p>
 
             {/* Cash payment reminder */}
-            <div className="bg-satos-red/20 border border-satos-red rounded-xl p-4 mb-5 text-left">
+            <div className="bg-satos-red/20 border border-satos-red rounded-xl p-4 mb-6 text-left">
               <div className="text-satos-gold font-bold mb-1">💵 Payment Reminder</div>
               <p className="text-gray-300 text-sm">
                 Please bring <strong className="text-white">
@@ -126,10 +133,7 @@ export default function Registration() {
               </p>
             </div>
 
-            <p className="text-gray-400 text-sm mb-6">
-              A confirmation email has been sent to you. We can't wait to see you at the show!
-            </p>
-            <button onClick={() => setSpecSuccess(null)} className="btn-gold">
+            <button onClick={() => setSpecSuccess(null)} className="btn-gold w-full">
               Register More Spectators
             </button>
           </div>

@@ -31,8 +31,13 @@ router.post('/', async (req, res) => {
     `);
     stmt.run(dogNumber, owner_name, email, phone, dog_name, dog_breed, dog_age, costume_theme, special_accommodations || '');
 
-    // Generate badge PDF
-    const badgePdfBytes = await generateBadgePDF(dogNumber, dog_name, owner_name, costume_theme);
+    // Generate badge PDF — non-blocking so a PDF error never fails the registration
+    let badgePdfBytes = null;
+    try {
+      badgePdfBytes = await generateBadgePDF(dogNumber, dog_name, owner_name, costume_theme);
+    } catch (pdfErr) {
+      console.error('Badge PDF generation failed (non-fatal):', pdfErr.message);
+    }
 
     // Send confirmation email (non-blocking)
     sendDogConfirmationEmail(email, owner_name, dog_name, dogNumber, costume_theme, badgePdfBytes).catch(console.error);
