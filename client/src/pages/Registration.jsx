@@ -9,6 +9,7 @@ const COSTUME_THEMES = [
   'Historical Era',
   'Matching Duo',
   'Professional Attire',
+  'Other',
 ]
 
 export default function Registration() {
