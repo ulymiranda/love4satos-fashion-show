@@ -145,19 +145,39 @@ async function generateBadgePDF(dogNumber, dogName, ownerName, costumeTheme) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Email helpers
 // ─────────────────────────────────────────────────────────────────────────────
+function emailIsConfigured() {
+  const user = process.env.EMAIL_USER || '';
+  const pass = process.env.EMAIL_PASS || '';
+  return user.length > 0 && pass.length > 0 && !pass.includes('PASTE_YOUR');
+}
+
 function createTransporter() {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) return null;
+  if (!emailIsConfigured()) return null;
   return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT) || 587,
+    host:   process.env.EMAIL_HOST  || 'smtp.gmail.com',
+    port:   parseInt(process.env.EMAIL_PORT) || 587,
     secure: false,
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+    auth:   { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    tls:    { rejectUnauthorized: false },
+  });
+}
+
+// Export so admin route can call it for diagnostics
+async function sendTestEmail(to) {
+  if (!emailIsConfigured()) throw new Error('Email env vars not set — add EMAIL_USER and EMAIL_PASS in Railway Variables');
+  const transporter = createTransporter();
+  await transporter.verify();
+  await transporter.sendMail({
+    from:    process.env.EMAIL_FROM || `Love4Satos <${process.env.EMAIL_USER}>`,
+    to,
+    subject: '✅ Test email — Love 4 Satos email is working!',
+    html:    '<p>This is a test email confirming that email delivery is working correctly for the Love 4 Satos Dog Fashion Show registration system.</p>',
   });
 }
 
 async function sendDogConfirmationEmail(to, ownerName, dogName, dogNumber, costumeTheme, badgePdfBytes) {
+  if (!emailIsConfigured()) { console.log('⚠️  Email not configured (EMAIL_PASS not set) — skipping confirmation email'); return; }
   const transporter = createTransporter();
-  if (!transporter) { console.log('Email not configured — skipping'); return; }
 
   await transporter.sendMail({
     from: process.env.EMAIL_FROM || `Love4Satos <${process.env.EMAIL_USER}>`,
@@ -205,8 +225,8 @@ async function sendDogConfirmationEmail(to, ownerName, dogName, dogNumber, costu
 }
 
 async function sendSpectatorConfirmationEmail(to, name, tickets) {
+  if (!emailIsConfigured()) { console.log('⚠️  Email not configured (EMAIL_PASS not set) — skipping confirmation email'); return; }
   const transporter = createTransporter();
-  if (!transporter) { console.log('Email not configured — skipping'); return; }
 
   await transporter.sendMail({
     from: process.env.EMAIL_FROM || `Love4Satos <${process.env.EMAIL_USER}>`,
@@ -246,3 +266,5 @@ async function sendSpectatorConfirmationEmail(to, name, tickets) {
 }
 
 module.exports = router;
+module.exports.sendTestEmail     = sendTestEmail;
+module.exports.emailIsConfigured = emailIsConfigured;

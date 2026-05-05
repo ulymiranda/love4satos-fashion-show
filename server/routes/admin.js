@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { db } = require('../db/database');
 const { requireAdmin, generateToken, invalidateToken } = require('../middleware/auth');
+const { sendTestEmail, emailIsConfigured } = require('./registrations');
 
 // ── Auth (token-based — works cross-domain) ───────────────────────────────────
 router.post('/login', (req, res) => {
@@ -29,6 +30,34 @@ router.get('/session', (req, res) => {
   // Re-import to check the live Set
   const auth = require('../middleware/auth');
   res.json({ isAdmin: false }); // client will use localStorage token directly
+});
+
+// ── Config status + test endpoints ───────────────────────────────────────────
+router.get('/config-status', requireAdmin, (req, res) => {
+  const emailOk  = emailIsConfigured();
+  const sheetsOk = !!(process.env.GOOGLE_SHEETS_WEBHOOK_URL || '').trim();
+  res.json({
+    email: {
+      configured: emailOk,
+      user: emailOk ? process.env.EMAIL_USER : null,
+      hint: emailOk ? null : 'Set EMAIL_USER and EMAIL_PASS (Gmail App Password) in Railway Variables',
+    },
+    sheets: {
+      configured: sheetsOk,
+      hint: sheetsOk ? null : 'Set GOOGLE_SHEETS_WEBHOOK_URL in Railway Variables',
+    },
+  });
+});
+
+router.post('/test-email', requireAdmin, async (req, res) => {
+  const to = req.body.to || process.env.EMAIL_USER;
+  try {
+    await sendTestEmail(to);
+    res.json({ success: true, message: `Test email sent to ${to}` });
+  } catch (err) {
+    console.error('Test email failed:', err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // ── Dog Registrations ─────────────────────────────────────────────────────────

@@ -2,11 +2,10 @@
 // No API keys needed — just a deployed Apps Script Web App URL
 
 const https = require('https');
-const http = require('http');
 
 async function postToSheet(data) {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-  if (!url) {
+  if (!url || url.trim() === '') {
     console.log('ℹ️  GOOGLE_SHEETS_WEBHOOK_URL not set — skipping Sheets sync');
     return;
   }
@@ -14,53 +13,65 @@ async function postToSheet(data) {
   return new Promise((resolve) => {
     const body = JSON.stringify(data);
     const parsed = new URL(url);
-    const isHttps = parsed.protocol === 'https:';
-    const lib = isHttps ? https : http;
 
     const options = {
       hostname: parsed.hostname,
-      port: parsed.port || (isHttps ? 443 : 80),
+      port: 443,
       path: parsed.pathname + parsed.search,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(body),
       },
-      // Follow redirects (Google Apps Script redirects POST → GET)
     };
 
-    const req = lib.request(options, (res) => {
-      // Google Apps Script 302-redirects — follow it
+    const req = https.request(options, (res) => {
+      // Google Apps Script 302-redirects after running the script
+      // The doPost function has ALREADY executed at this point
+      // We must follow the redirect with GET (not POST) to finalize
       if (res.statusCode === 302 && res.headers.location) {
+        console.log('📊 Sheets: following redirect…');
         const redirectUrl = new URL(res.headers.location);
-        const redirectOptions = {
-          hostname: redirectUrl.hostname,
-          path: redirectUrl.pathname + redirectUrl.search,
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(body),
+        const getReq = https.request(
+          {
+            hostname: redirectUrl.hostname,
+            port: 443,
+            path: redirectUrl.pathname + redirectUrl.search,
+            method: 'GET',
           },
-        };
-        const req2 = https.request(redirectOptions, (res2) => {
-          res2.on('data', () => {});
-          res2.on('end', () => {
-            console.log('✅ Google Sheets updated');
-            resolve();
-          });
+          (res2) => {
+            res2.on('data', () => {});
+            res2.on('end', () => {
+              console.log('✅ Google Sheets updated');
+              resolve();
+            });
+          }
+        );
+        getReq.on('error', () => {
+          // Even if the GET follow fails, the script already ran
+          console.log('✅ Google Sheets script ran (redirect follow minor error)');
+          resolve();
         });
-        req2.on('error', (e) => { console.error('Sheets redirect error:', e.message); resolve(); });
-        req2.write(body);
-        req2.end();
-      } else {
-        res.on('data', () => {});
-        res.on('end', () => { console.log('✅ Google Sheets updated'); resolve(); });
+        getReq.end();
+        return;
       }
+
+      // Non-redirect response
+      let raw = '';
+      res.on('data', (c) => { raw += c; });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          console.log('✅ Google Sheets updated');
+        } else {
+          console.error(`⚠️ Sheets returned ${res.statusCode}: ${raw.slice(0, 200)}`);
+        }
+        resolve();
+      });
     });
 
     req.on('error', (e) => {
       console.error('Google Sheets webhook error:', e.message);
-      resolve(); // Don't fail registration if Sheets is down
+      resolve(); // never block a registration
     });
 
     req.write(body);

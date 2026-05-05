@@ -29,17 +29,23 @@ export default function AdminDashboard() {
   const [specSearch, setSpecSearch] = useState('')
   const [specFilter, setSpecFilter] = useState('all')
 
+  const [configStatus, setConfigStatus] = useState(null)
+  const [testEmailAddr, setTestEmailAddr] = useState('')
+  const [testEmailLoading, setTestEmailLoading] = useState(false)
+
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      const [regRes, specRes, statsRes] = await Promise.all([
+      const [regRes, specRes, statsRes, cfgRes] = await Promise.all([
         api('get', '/api/admin/registrations'),
         api('get', '/api/admin/spectators'),
         api('get', '/api/admin/stats'),
+        api('get', '/api/admin/config-status'),
       ])
       setRegistrations(regRes.data)
       setSpectators(specRes.data)
       setStats(statsRes.data)
+      setConfigStatus(cfgRes.data)
     } catch (err) {
       if (err.response?.status === 401) {
         localStorage.removeItem('adminToken')
@@ -52,6 +58,19 @@ export default function AdminDashboard() {
       setLoading(false)
     }
   }, [])
+
+  async function sendTestEmail() {
+    setTestEmailLoading(true)
+    try {
+      const to = testEmailAddr.trim() || 'umtmiranda@gmail.com'
+      const res = await api('post', '/api/admin/test-email', { to })
+      toast.success(res.data.message || `Test email sent to ${to}!`)
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Test email failed — check Railway logs')
+    } finally {
+      setTestEmailLoading(false)
+    }
+  }
 
   useEffect(() => {
     if (isAdmin) loadData()
@@ -197,6 +216,57 @@ export default function AdminDashboard() {
               <div className="text-gray-400 text-sm mt-1">Total Attendees</div>
               <div className="text-gray-600 text-xs">Contestants + spectators</div>
             </div>
+          </div>
+        )}
+
+        {/* System config status */}
+        {configStatus && (
+          <div className="card-dark mb-8 border border-gray-700">
+            <h2 className="text-white font-serif font-bold text-lg mb-4">⚙️ System Status</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Email status */}
+              <div className={`rounded-lg p-4 border ${configStatus.email.configured ? 'border-green-700 bg-green-900/20' : 'border-red-700 bg-red-900/20'}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xl">{configStatus.email.configured ? '✅' : '❌'}</span>
+                  <span className="font-bold text-white">Email</span>
+                </div>
+                {configStatus.email.configured
+                  ? <p className="text-green-400 text-sm">Configured — sending from {configStatus.email.user}</p>
+                  : <p className="text-red-400 text-sm">{configStatus.email.hint}</p>
+                }
+              </div>
+              {/* Google Sheets status */}
+              <div className={`rounded-lg p-4 border ${configStatus.sheets.configured ? 'border-green-700 bg-green-900/20' : 'border-yellow-700 bg-yellow-900/20'}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xl">{configStatus.sheets.configured ? '✅' : '⚠️'}</span>
+                  <span className="font-bold text-white">Google Sheets</span>
+                </div>
+                {configStatus.sheets.configured
+                  ? <p className="text-green-400 text-sm">Webhook configured — registrations sync automatically</p>
+                  : <p className="text-yellow-400 text-sm">{configStatus.sheets.hint}</p>
+                }
+              </div>
+            </div>
+            {/* Test email */}
+            {configStatus.email.configured && (
+              <div className="flex flex-wrap gap-2 items-center pt-3 border-t border-gray-700">
+                <span className="text-gray-400 text-sm">Send a test email to:</span>
+                <input
+                  type="email"
+                  value={testEmailAddr}
+                  onChange={e => setTestEmailAddr(e.target.value)}
+                  placeholder="umtmiranda@gmail.com"
+                  className="bg-gray-950 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm focus:border-satos-gold focus:outline-none flex-1 min-w-[220px]"
+                />
+                <button
+                  onClick={sendTestEmail}
+                  disabled={testEmailLoading}
+                  className="bg-satos-red hover:bg-satos-maroon text-white px-4 py-1.5 rounded-lg text-sm transition-colors disabled:opacity-50"
+                >
+                  {testEmailLoading ? 'Sending…' : '📧 Send Test'}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
